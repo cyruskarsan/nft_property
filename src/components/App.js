@@ -2,11 +2,23 @@ import React, { Component } from 'react';
 import './App.css';
 import Color from '../abis/Color.json'
 import { ethers } from "ethers"
-
+import fox from '../metamask-fox.svg'
+import { Button } from 'react-bootstrap/Button';
 class App extends Component {
 
   async componentWillMount() {
+    await this.loadMetamask()
     await this.loadBlockchainData()
+  }
+  async loadMetamask() {
+    new ethers.providers.Web3Provider(window.ethereum)
+    if (typeof window.ethereum !== 'undefined') {
+      console.log('MetaMask is installed!');
+    }
+    else{
+      alert("Please install Metamask!")
+    }
+    
   }
 
   async loadBlockchainData() {
