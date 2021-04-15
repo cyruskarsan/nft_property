@@ -1,5 +1,5 @@
-const Color = artifacts.require("Color");
+const Property = artifacts.require("Property");
 
 module.exports = function(deployer) {
-  deployer.deploy(Color);
+  deployer.deploy(Property);
 };

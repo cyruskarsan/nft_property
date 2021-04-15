@@ -8,9 +8,7 @@ contract Color is ERC721{
 
     //hashtable
     mapping(string => bool) _colorExists;
-    constructor() ERC721("Color", "COLOR") {
-        
-    }
+    constructor() ERC721("Color", "CLR") {}
     //mint a color and restrict access to everyone (should restrict to owner in prod)
     function mint(string memory _color) public {
         // Require unique color
