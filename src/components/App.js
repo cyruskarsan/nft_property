@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import Color from '../abis/Color.json'
+import Property from '../abis/Property.json'
 import { ethers } from "ethers"
-import fox from '../metamask-fox.svg'
-import { Button } from 'react-bootstrap/Button';
 class App extends Component {
 
   async componentWillMount() {
@@ -38,32 +37,34 @@ class App extends Component {
     });
     //retrive chainid to determine which network we are connected to
     const chainId = (await provider.getNetwork()).chainId
+    console.log("chain", chainId)
     const abi = Color.abi
     //connect to contract on the correct network
-    const contract = new ethers.Contract(Color.networks[chainId].address, abi, provider)
+    const contract = new ethers.Contract(Property.networks[chainId].address, abi, provider)
     this.setState({ contract })
     const totalSupply = await contract.totalSupply()
     this.setState({ totalSupply })
+    console.log("totalSupply", totalSupply)
     // Load Colors
     for (var i = 1; i <= totalSupply; i++) {
-      const color = await contract.colors(i - 1)
+      const property = await contract.ownerOf(i - 1)
       this.setState({
-        colors: [...this.state.colors, color]
+        properties: [...this.state.properties, property]
       })
     }
   }
 
   //mint a new token when you click on the mint button
-  createToken = (color) => {
+  createToken = (property) => {
     //connect the contract to metamask as a signer
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner(0)
     const contract = this.state.contract.connect(signer)
-    contract.mint(color)
+    contract.mint(property)
       .then('receipt', (receipt) => {
         console.log(receipt)
         this.setState({
-          colors: [...this.state.colors, color]
+          properties: [...this.state.properties, property]
         })
       })
   }
@@ -74,7 +75,7 @@ class App extends Component {
       account: '',
       contract: null,
       totalSupply: 0,
-      colors: []
+      properties: []
     }
   }
 
@@ -84,11 +85,11 @@ class App extends Component {
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
           <a
             className="navbar-brand col-sm-3 col-md-2 mr-0"
-            href="http://www.dappuniversity.com/bootcamp"
+            href="https://cyruskarsan.github.io"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Color Tokens
+            Property Tokens
           </a>
           <ul className="navbar-nav px-3">
             <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
@@ -109,25 +110,33 @@ class App extends Component {
                   <input
                     type='text'
                     className='form-control mb-1'
-                    placeholder='e.g. #FFFFFF'
+                    placeholder='e.g. 54 fillmore, Irvine, CA'
                     ref={(input) => { this.color = input }}
                   />
+                  <p>
                   <input
                     type='submit'
                     className='btn btn-block btn-primary'
                     value='MINT'
                   />
+                  <input
+                    type='submit'
+                    className='btn btn-block btn-secondary'
+                    value='Find Owner'
+                  />
+                  </p>
+                  
                 </form>
               </div>
             </main>
           </div>
           <hr />
           <div className="row text-center">
-            {this.state.colors.map((color, key) => {
+            {this.state.properties.map((property, key) => {
               return (
                 <div key={key} className="col-md-3 mb-3">
-                  <div className="token" style={{ backgroundColor: color }}></div>
-                  <div>{color}</div>
+                  <div className="token" ></div>
+                  <div>{property}</div>
                 </div>
               )
             })}

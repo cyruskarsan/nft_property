@@ -7,7 +7,7 @@ contract Property is ERC721PresetMinterPauserAutoId {
     constructor()
         ERC721PresetMinterPauserAutoId(
             "Property NFT",
-            "NFT",
+            "PRTY",
             "https://github.com/cyruskarsan"
         )
     {}
